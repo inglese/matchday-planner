@@ -33,12 +33,12 @@ public class MatchdayTest {
         final LocalDate baseDate = LocalDate.now();
         final Matchday baseMatchday = Matchday.on(baseDate);
         final LocalDate similarDate = LocalDate.now();
-        final Matchday similarMatchday = Matchday.on(baseDate);
+        final Matchday equalMatchday = Matchday.on(baseDate);
         final LocalDate earlierDate = LocalDate.now().minusDays(1);
         final Matchday earlierMatchday = Matchday.on(earlierDate);
         final LocalDate laterDate = LocalDate.now().plusDays(1);
         final Matchday laterMatchday = Matchday.on(laterDate);
 
-        ComparableVerifier.forExamples(baseMatchday, similarMatchday, earlierMatchday, laterMatchday).verify();
+        ComparableVerifier.forExamples(baseMatchday, equalMatchday, earlierMatchday, laterMatchday).verify();
     }
 }

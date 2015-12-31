@@ -38,7 +38,7 @@ public final class ComparableVerifier<T extends Comparable> {
         checkConsistencyToEquals();
 
         assertThat(base, is(greaterThan(lesser)));
-        assertThat(base, is(lessThan(lesser)));
+        assertThat(base, is(lessThan(greater)));
         assertThat(greater, is(greaterThan(lesser)));
     }
 

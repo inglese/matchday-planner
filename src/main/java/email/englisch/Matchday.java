@@ -78,6 +78,8 @@ public class Matchday implements Comparable<Matchday> {
 
     @Override
     public int compareTo(final Matchday otherMatchday) {
-        return 0;
+        Objects.requireNonNull(otherMatchday, "otherMatchday must not be null");
+
+        return date.compareTo(otherMatchday.date);
     }
 }
