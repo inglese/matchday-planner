@@ -32,6 +32,14 @@ public final class ComparableVerifier<T extends Comparable> {
 
     @SuppressWarnings("unchecked")
     public void verify() {
+        checkTransitivity();
+        assertThat(base, is(greaterThan(lesser)));
+        assertThat(base, is(lessThan(lesser)));
+        assertThat(greater, is(greaterThan(lesser)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkTransitivity() {
         final double sgn_greater_compareTo_base = Math.signum(greater.compareTo(base));
         final double sgn_base_compareTo_lesser = Math.signum(base.compareTo(lesser));
         final double sgn_greater_compareTo_lesser = Math.signum(greater.compareTo(lesser));
@@ -39,9 +47,5 @@ public final class ComparableVerifier<T extends Comparable> {
         assertThat(sgn_greater_compareTo_base, is(greaterThan(0.0)));
         assertThat(sgn_base_compareTo_lesser, is(greaterThan(0.0)));
         assertThat(sgn_greater_compareTo_lesser, is(greaterThan(0.0)));
-
-        assertThat(base, is(greaterThan(lesser)));
-        assertThat(base, is(lessThan(lesser)));
-        assertThat(greater, is(greaterThan(lesser)));
     }
 }
