@@ -76,6 +76,15 @@ public class Matchday implements Comparable<Matchday> {
         return Objects.hash(this.date);
     }
 
+    /**
+     * Compares this matchday to another matchday.
+     * <p>
+     * The comparison is based on the date, from earliest to latest.
+     * It is "consistent with equals", as defined by {@link Comparable}.
+     *
+     * @param otherMatchday  the other matchday to compare to, not null
+     * @return the comparator value, negative if less, positive if greater, zero if equal
+     */
     @Override
     public int compareTo(final Matchday otherMatchday) {
         Objects.requireNonNull(otherMatchday, "otherMatchday must not be null");
