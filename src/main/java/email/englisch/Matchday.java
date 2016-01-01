@@ -21,7 +21,7 @@ public class Matchday implements Comparable<Matchday> {
 
     private Matchday(LocalDate date) {
         this.date = date;
-        LOGGER.trace("Created {}", this.toString());
+        LOGGER.debug("Created {}", this.toString());
     }
 
     /**
