@@ -91,4 +91,13 @@ public class Matchday implements Comparable<Matchday> {
 
         return date.compareTo(otherMatchday.date);
     }
+
+    /**
+     * Gets the date when the matchday takes place
+     *
+     * @return the date of the matchday, not null
+     */
+    public LocalDate getDate() {
+        return LocalDate.from(this.date);
+    }
 }
