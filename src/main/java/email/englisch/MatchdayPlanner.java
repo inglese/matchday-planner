@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -21,8 +20,8 @@ public class MatchdayPlanner extends Application {
         matchday = Matchday.on(LocalDate.now());
 
         Label lblMatchday = new Label(matchday.toString());
-        BorderPane.setMargin(lblMatchday, new Insets(5, 5, 5, 5));
         Button btnEdit = new Button("_Bearbeiten");
+        BorderPane.setMargin(lblMatchday, new Insets(5, 5, 5, 5));
         BorderPane.setMargin(btnEdit, new Insets(5, 5, 5, 5));
         btnEdit.setOnAction(e -> editMatchday(primaryStage));
 
@@ -39,12 +38,7 @@ public class MatchdayPlanner extends Application {
     }
 
     private void editMatchday(Stage primaryStage) {
-        MatchdayEditController matchdayEditController = new MatchdayEditController(matchday.getDate());
-        Stage stage = new Stage();
-        stage.setTitle("Spieltag bearbeiten");
-        stage.setScene(matchdayEditController.getScene());
-        stage.initOwner(primaryStage);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.show();
+        MatchdayEditDialogController matchdayEditDialogController = new MatchdayEditDialogController(primaryStage, matchday.getDate());
+        matchdayEditDialogController.showMatchdayEditDialogAndWait();
     }
 }
