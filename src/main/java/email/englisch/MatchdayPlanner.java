@@ -39,10 +39,10 @@ public class MatchdayPlanner extends Application {
     }
 
     private void editMatchday(Stage primaryStage) {
-        MatchdayEditView matchdayEditView = new MatchdayEditView(matchday.getDate());
+        MatchdayEditController matchdayEditController = new MatchdayEditController(matchday.getDate());
         Stage stage = new Stage();
         stage.setTitle("Spieltag bearbeiten");
-        stage.setScene(matchdayEditView.getScene());
+        stage.setScene(matchdayEditController.getScene());
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.show();
