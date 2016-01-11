@@ -17,6 +17,9 @@ public class MatchdayEditDialogController {
 
     public MatchdayEditDialogController(final Window owner, final LocalDate date) {
         this.matchdayEditDialog = new MatchdayEditDialog(date);
+        matchdayEditDialog.getBtnOk().setOnAction(e -> closeMatchdayEditDialog());
+        matchdayEditDialog.getBtnCancel().setOnAction(e -> closeMatchdayEditDialog());
+
         this.stage = new Stage();
         stage.setTitle("Spieltag bearbeiten");
         stage.setScene(matchdayEditDialog.getScene());
@@ -26,5 +29,9 @@ public class MatchdayEditDialogController {
 
     public void showMatchdayEditDialogAndWait() {
         this.stage.showAndWait();
+    }
+
+    private void closeMatchdayEditDialog() {
+        this.stage.hide();
     }
 }
