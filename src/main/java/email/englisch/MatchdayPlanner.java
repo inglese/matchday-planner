@@ -40,5 +40,9 @@ public class MatchdayPlanner extends Application {
     private void editMatchday(Stage primaryStage) {
         MatchdayEditDialogController matchdayEditDialogController = new MatchdayEditDialogController(primaryStage, matchday.getDate());
         matchdayEditDialogController.showMatchdayEditDialogAndWait();
+        if (matchdayEditDialogController.okWasClicked())
+            System.out.println("'OK' was clicked");
+        else
+            System.out.println("'Abbrechen' was clicked");
     }
 }
