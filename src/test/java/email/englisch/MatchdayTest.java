@@ -24,7 +24,7 @@ public class MatchdayTest {
     @Test
     public void test_equals_contract() {
         EqualsVerifier.forClass(Matchday.class)
-                .suppress(Warning.NULL_FIELDS)
+                .suppress(Warning.NULL_FIELDS, Warning.NONFINAL_FIELDS)
                 .verify();
     }
 

@@ -1,5 +1,8 @@
 package email.englisch;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,14 +15,15 @@ import java.time.LocalDate;
 public class MatchdayEditDialog {
 
     private final Scene scene;
+    private final DatePicker dpDate;
     private Button btnOk;
     private Button btnCancel;
 
     private MatchdayEditDialog() {
-        throw new AssertionError("default constructor accidentally invoked from with class MatchdayEditDialog");
+        throw new AssertionError("default constructor accidentally invoked from within class MatchdayEditDialog");
     }
     public MatchdayEditDialog(LocalDate date) {
-        DatePicker dpDate = new DatePicker(date);
+        dpDate = new DatePicker(date);
 
         this.btnOk = new Button("_OK");
         this.btnOk.setDefaultButton(true);
@@ -39,11 +43,15 @@ public class MatchdayEditDialog {
         return this.scene;
     }
 
-    public Button getBtnOk() {
-        return this.btnOk;
+    public void onOkClicked(EventHandler<ActionEvent> value) {
+        this.btnOk.setOnAction(value);
     }
 
-    public Button getBtnCancel() {
-        return this.btnCancel;
+    public void onCancelClicked(EventHandler<ActionEvent> value) {
+        this.btnCancel.setOnAction(value);
+    }
+
+    public LocalDate getDate() {
+        return this.dpDate.getValue();
     }
 }

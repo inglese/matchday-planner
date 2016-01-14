@@ -14,12 +14,13 @@ import java.time.LocalDate;
 public class MatchdayPlanner extends Application {
 
     private Matchday matchday;
+    private Label lblMatchday = new Label();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         matchday = Matchday.on(LocalDate.now());
 
-        Label lblMatchday = new Label(matchday.toString());
+        lblMatchday.setText(matchday.toString());
         Button btnEdit = new Button("_Bearbeiten");
         BorderPane.setMargin(lblMatchday, new Insets(5, 5, 5, 5));
         BorderPane.setMargin(btnEdit, new Insets(5, 5, 5, 5));
@@ -38,11 +39,8 @@ public class MatchdayPlanner extends Application {
     }
 
     private void editMatchday(Stage primaryStage) {
-        MatchdayEditDialogController matchdayEditDialogController = new MatchdayEditDialogController(primaryStage, matchday.getDate());
-        matchdayEditDialogController.showMatchdayEditDialogAndWait();
-        if (matchdayEditDialogController.okWasClicked())
-            System.out.println("'OK' was clicked");
-        else
-            System.out.println("'Abbrechen' was clicked");
+        MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, matchday);
+        matchdayEditController.showMatchdayEditDialogAndWait();
+        lblMatchday.setText(matchday.toString());
     }
 }

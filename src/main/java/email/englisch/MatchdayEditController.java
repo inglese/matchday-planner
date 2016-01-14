@@ -6,23 +6,23 @@ import javafx.stage.Window;
 
 import java.time.LocalDate;
 
-public class MatchdayEditDialogController {
+public class MatchdayEditController {
 
     private final MatchdayEditDialog matchdayEditDialog;
     private final Stage stage;
-    private boolean okWasClicked = false;
 
-    private MatchdayEditDialogController() {
-        throw new AssertionError("default constructor accidentally invoked from with class MatchdayEditDialogController");
+    private MatchdayEditController() {
+        throw new AssertionError("default constructor accidentally invoked from within class MatchdayEditController");
     }
 
-    public MatchdayEditDialogController(final Window owner, final LocalDate date) {
-        this.matchdayEditDialog = new MatchdayEditDialog(date);
-        matchdayEditDialog.getBtnOk().setOnAction(e -> {
-            okWasClicked = true;
+    public MatchdayEditController(final Window owner, final Matchday matchday) {
+        this.matchdayEditDialog = new MatchdayEditDialog(matchday.getDate());
+        matchdayEditDialog.onOkClicked((e -> {
+        System.out.println("Eingegebenes Datum: " + matchdayEditDialog.getDate());
+            matchday.setDate(matchdayEditDialog.getDate());
             closeMatchdayEditDialog();
-        });
-        matchdayEditDialog.getBtnCancel().setOnAction(e -> closeMatchdayEditDialog());
+        }));
+        matchdayEditDialog.onCancelClicked((e -> closeMatchdayEditDialog()));
 
         this.stage = new Stage();
         stage.setTitle("Spieltag bearbeiten");
@@ -37,9 +37,5 @@ public class MatchdayEditDialogController {
 
     private void closeMatchdayEditDialog() {
         this.stage.hide();
-    }
-
-    public boolean okWasClicked() {
-        return this.okWasClicked;
     }
 }
