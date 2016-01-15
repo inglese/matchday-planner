@@ -21,7 +21,7 @@ public class MatchdayPlanner extends Application {
         Button btnNew = new Button("_Neu");
         btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
-        btnDelete.setOnAction(e -> deleteMatchday(primaryStage));
+        btnDelete.setOnAction(e -> deleteMatchday());
         btnDelete.disableProperty().bind(listView.getSelectionModel().selectedIndexProperty().lessThan(0));
         VBox buttonBox = new VBox(btnNew, btnDelete);
 
@@ -50,14 +50,19 @@ public class MatchdayPlanner extends Application {
             super.updateItem(item, empty);
             if (item != null & !empty)
                 setText(item.getDate().toString());
+            else if (empty) {
+                setText(null);
+                setGraphic(null);
+            }
         }
     }
 
     private void createMatchday(Stage primaryStage) {
-
+        MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
+        matchdayEditController.showMatchdayEditDialogAndWait();
     }
 
-    private void deleteMatchday(Stage primaryStage) {
-
+    private void deleteMatchday() {
+        this.listView.getItems().remove(this.listView.getSelectionModel().getSelectedIndex());
     }
 }
