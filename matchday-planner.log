@@ -1,1 +1,4 @@
-07:40:38.893 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-15')
+15:33:59.977 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-15')
+15:34:00.003 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-14')
+15:34:00.003 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-15')
+15:34:00.003 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-16')
