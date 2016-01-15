@@ -1,12 +1,12 @@
 package email.englisch;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -14,22 +14,22 @@ import java.time.LocalDate;
 public class MatchdayPlanner extends Application {
 
     private Matchday matchday;
-    private Label lblMatchday = new Label();
+    private ListView<Matchday> listView = new ListView<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         matchday = Matchday.on(LocalDate.now());
 
-        lblMatchday.setText(matchday.toString());
-        Button btnEdit = new Button("_Bearbeiten");
-        BorderPane.setMargin(lblMatchday, new Insets(5, 5, 5, 5));
-        BorderPane.setMargin(btnEdit, new Insets(5, 5, 5, 5));
-        btnEdit.setOnAction(e -> editMatchday(primaryStage));
+        Button btnNew = new Button("_Neu");
+        btnNew.setOnAction(e -> createMatchday(primaryStage));
+        Button btnDelete = new Button("_Löschen");
+        btnDelete.setOnAction(e -> deleteMatchday(primaryStage));
+        VBox buttonBox = new VBox(btnNew, btnDelete);
 
         BorderPane root = new BorderPane();
-        BorderPane.setAlignment(lblMatchday, Pos.TOP_LEFT);
-        root.setCenter(lblMatchday);
-        root.setRight(btnEdit);
+        BorderPane.setAlignment(listView, Pos.TOP_LEFT);
+        root.setCenter(listView);
+        root.setRight(buttonBox);
 
         Scene scene = new Scene(root);
 
@@ -38,9 +38,11 @@ public class MatchdayPlanner extends Application {
         primaryStage.show();
     }
 
-    private void editMatchday(Stage primaryStage) {
-        MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, matchday);
-        matchdayEditController.showMatchdayEditDialogAndWait();
-        lblMatchday.setText(matchday.toString());
+    private void createMatchday(Stage primaryStage) {
+
+    }
+
+    private void deleteMatchday(Stage primaryStage) {
+
     }
 }
