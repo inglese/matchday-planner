@@ -13,10 +13,10 @@ public class Matchday implements Comparable<Matchday> {
 
     private static final Logger LOGGER = LogManager.getLogger(Matchday.class);
 
-    private final LocalDate date;
+    private LocalDate date;
 
     private Matchday() {
-        throw new AssertionError("default constructor accidentally invoked from with class Matchday");
+        throw new AssertionError("default constructor accidentally invoked from within class Matchday");
     }
 
     private Matchday(LocalDate date) {
@@ -90,5 +90,24 @@ public class Matchday implements Comparable<Matchday> {
         Objects.requireNonNull(otherMatchday, "otherMatchday must not be null");
 
         return date.compareTo(otherMatchday.date);
+    }
+
+    /**
+     * Gets the date when the matchday takes place
+     *
+     * @return the date of the matchday, not null
+     */
+    public LocalDate getDate() {
+        return LocalDate.from(this.date);
+    }
+
+    /**
+     * Sets the date when the matchday takes place.
+     *
+     * @param date  date when the matchday takes place, not null
+     */
+    public void setDate(LocalDate date) {
+        Objects.requireNonNull(date, "date must not be null");
+        this.date = date;
     }
 }

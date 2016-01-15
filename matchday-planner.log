@@ -1,4 +1,1 @@
-15:14:09.615 [Test worker] DEBUG email.englisch.Matchday - Created Matchday('2016-01-01')
-15:14:09.615 [Test worker] DEBUG email.englisch.Matchday - Created Matchday('2016-01-01')
-15:14:09.615 [Test worker] DEBUG email.englisch.Matchday - Created Matchday('2015-12-31')
-15:14:09.615 [Test worker] DEBUG email.englisch.Matchday - Created Matchday('2016-01-02')
+06:59:00.945 [JavaFX Application Thread] DEBUG email.englisch.Matchday - Created Matchday('2016-01-15')
