@@ -18,7 +18,6 @@ public class MatchdayEditController {
     public MatchdayEditController(final Window owner, final Matchday matchday) {
         this.matchdayEditDialog = new MatchdayEditDialog(matchday.getDate());
         matchdayEditDialog.onOkClicked((e -> {
-        System.out.println("Eingegebenes Datum: " + matchdayEditDialog.getDate());
             matchday.setDate(matchdayEditDialog.getDate());
             closeMatchdayEditDialog();
         }));

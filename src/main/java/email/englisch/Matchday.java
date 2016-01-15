@@ -101,6 +101,11 @@ public class Matchday implements Comparable<Matchday> {
         return LocalDate.from(this.date);
     }
 
+    /**
+     * Sets the date when the matchday takes place.
+     *
+     * @param date  date when the matchday takes place, not null
+     */
     public void setDate(LocalDate date) {
         Objects.requireNonNull(date, "date must not be null");
         this.date = date;
