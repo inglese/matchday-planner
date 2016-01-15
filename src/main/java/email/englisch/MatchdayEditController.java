@@ -15,16 +15,13 @@ public class MatchdayEditController {
         throw new AssertionError("default constructor accidentally invoked from within class MatchdayEditController");
     }
 
-    public MatchdayEditController(final Window owner, final Matchday matchday) {
-        this.matchdayEditDialog = new MatchdayEditDialog(matchday.getDate());
-        matchdayEditDialog.onOkClicked((e -> {
-            matchday.setDate(matchdayEditDialog.getDate());
-            closeMatchdayEditDialog();
-        }));
+    public MatchdayEditController(final Window owner, final LocalDate date) {
+        this.matchdayEditDialog = new MatchdayEditDialog(date);
+        matchdayEditDialog.onOkClicked((e -> closeMatchdayEditDialog()));
         matchdayEditDialog.onCancelClicked((e -> closeMatchdayEditDialog()));
 
         this.stage = new Stage();
-        stage.setTitle("Spieltag bearbeiten");
+        stage.setTitle("Neuer Spieltag");
         stage.setScene(matchdayEditDialog.getScene());
         stage.initOwner(owner);
         stage.initModality(Modality.WINDOW_MODAL);

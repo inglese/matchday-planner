@@ -21,7 +21,7 @@ public class MatchdayPlanner extends Application {
         Button btnNew = new Button("_Neu");
         btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
-        btnDelete.setOnAction(e -> deleteMatchday(primaryStage));
+        btnDelete.setOnAction(e -> deleteMatchday());
         btnDelete.disableProperty().bind(listView.getSelectionModel().selectedIndexProperty().lessThan(0));
         VBox buttonBox = new VBox(btnNew, btnDelete);
 
@@ -54,10 +54,13 @@ public class MatchdayPlanner extends Application {
     }
 
     private void createMatchday(Stage primaryStage) {
-
+        MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
+        matchdayEditController.showMatchdayEditDialogAndWait();
     }
 
-    private void deleteMatchday(Stage primaryStage) {
-
+    private void deleteMatchday() {
+        this.listView.getItems().remove(this.listView.getSelectionModel().getSelectedIndex());
+        // TODO: Bottom ListView item still visible if an item is deleted
+        this.listView.refresh();
     }
 }
