@@ -14,17 +14,15 @@ import java.time.LocalDate;
 
 public class MatchdayPlanner extends Application {
 
-    private Matchday matchday;
     private ListView<Matchday> listView = new ListView<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        matchday = Matchday.on(LocalDate.now());
-
         Button btnNew = new Button("_Neu");
         btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
         btnDelete.setOnAction(e -> deleteMatchday(primaryStage));
+        btnDelete.disableProperty().bind(listView.getSelectionModel().selectedIndexProperty().lessThan(0));
         VBox buttonBox = new VBox(btnNew, btnDelete);
 
         listView.getItems().addAll(
@@ -32,9 +30,7 @@ public class MatchdayPlanner extends Application {
                 Matchday.on(LocalDate.now()),
                 Matchday.on(LocalDate.now().plusDays(1))
         );
-        listView.setCellFactory((param) -> {
-            return new MatchdayCell();
-        });
+        listView.setCellFactory((param) -> new MatchdayCell());
 
         BorderPane root = new BorderPane();
         BorderPane.setAlignment(listView, Pos.TOP_LEFT);
