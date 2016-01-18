@@ -1,6 +1,5 @@
 package email.englisch;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -11,7 +10,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
+/**
+ * Constructs and administers a dialog for creating a matchday
+ */
 public class MatchdayEditDialog {
 
     private final Scene scene;
@@ -22,7 +25,14 @@ public class MatchdayEditDialog {
     private MatchdayEditDialog() {
         throw new AssertionError("default constructor accidentally invoked from within class MatchdayEditDialog");
     }
+
+    /**
+     * Creates a matchday edit dialog with the specified date as default entry in the date field
+     *
+     * @param date  the date that is shown in the date field as default, not null
+     */
     public MatchdayEditDialog(LocalDate date) {
+        Objects.requireNonNull(date, "date must not be null");
         dpDate = new DatePicker(date);
 
         this.btnOk = new Button("_OK");
@@ -39,18 +49,38 @@ public class MatchdayEditDialog {
         this.scene = new Scene(root);
     }
 
+    /**
+     * Returns the scene which contains the controls of the dialog
+     *
+     * @return the scene which contains the controls of the dialog
+     */
     public Scene getScene() {
         return this.scene;
     }
 
-    public void onOkClicked(EventHandler<ActionEvent> value) {
-        this.btnOk.setOnAction(value);
+    /**
+     * Sets the action of the OK button
+     *
+     * @param action  the action, which is invoked whenever the button is fired
+     */
+    public void onOkClicked(EventHandler<ActionEvent> action) {
+        this.btnOk.setOnAction(action);
     }
 
-    public void onCancelClicked(EventHandler<ActionEvent> value) {
-        this.btnCancel.setOnAction(value);
+    /**
+     * Sets the action of the cancel button
+     *
+     * @param action  the action, which is invoked whenever the button is fired
+     */
+    public void onCancelClicked(EventHandler<ActionEvent> action) {
+        this.btnCancel.setOnAction(action);
     }
 
+    /**
+     * Returns the date that was entered by the user
+     *
+     * @return the date of the date field
+     */
     public LocalDate getDate() {
         return this.dpDate.getValue();
     }

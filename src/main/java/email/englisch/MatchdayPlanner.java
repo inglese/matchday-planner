@@ -3,6 +3,7 @@ package email.englisch;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -11,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class MatchdayPlanner extends Application {
 
@@ -48,11 +51,13 @@ public class MatchdayPlanner extends Application {
         @Override
         protected void updateItem(Matchday item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null & !empty)
-                setText(item.getDate().toString());
-            else if (empty) {
+            if (empty || item == null) {
                 setText(null);
                 setGraphic(null);
+            }
+            else
+            {
+                setText(item.getDate().toString());
             }
         }
     }
@@ -60,6 +65,18 @@ public class MatchdayPlanner extends Application {
     private void createMatchday(Stage primaryStage) {
         MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
         matchdayEditController.showMatchdayEditDialogAndWait();
+        if (matchdayEditController.getCreatedMatchday().isPresent()) {
+            final Matchday createdMatchday = matchdayEditController.getCreatedMatchday().get();
+            if (listView.getItems().contains(createdMatchday)) {
+                final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+                final Alert alert = new Alert(Alert.AlertType.ERROR, "Am " + dateString + " existiert bereits ein Spieltag!");
+                alert.showAndWait();
+            }
+            else {
+                listView.getItems().add(createdMatchday);
+                listView.getItems().sort(null);
+            }
+        }
     }
 
     private void deleteMatchday() {
