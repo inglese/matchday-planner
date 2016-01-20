@@ -26,7 +26,9 @@ public class MatchdayPlanner extends Application {
         Button btnDelete = new Button("_Löschen");
         btnDelete.setOnAction(e -> deleteMatchday());
         btnDelete.disableProperty().bind(listView.getSelectionModel().selectedIndexProperty().lessThan(0));
-        VBox buttonBox = new VBox(btnNew, btnDelete);
+        Button btnCreateXlsx = new Button("_Erzeuge XLSX-Datei");
+        btnCreateXlsx.setOnAction(e -> createXlsx());
+        VBox buttonBox = new VBox(btnNew, btnDelete, btnCreateXlsx);
 
         listView.getItems().addAll(
                 Matchday.on(LocalDate.now().minusDays(1)),
@@ -81,5 +83,9 @@ public class MatchdayPlanner extends Application {
 
     private void deleteMatchday() {
         this.listView.getItems().remove(this.listView.getSelectionModel().getSelectedIndex());
+    }
+
+    private void createXlsx() {
+        MatchdayToXlsxConverter.createXlsxFrom(listView.getItems().stream());
     }
 }
