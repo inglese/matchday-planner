@@ -3,17 +3,20 @@ package email.englisch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * Manages days where matches can take place
  */
-public class Matchday implements Comparable<Matchday> {
+public class Matchday implements Comparable<Matchday>, Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(Matchday.class);
 
-    private LocalDate date;
+    private final LocalDate date;
 
     private Matchday() {
         throw new AssertionError("default constructor accidentally invoked from within class Matchday");
@@ -101,13 +104,28 @@ public class Matchday implements Comparable<Matchday> {
         return LocalDate.from(this.date);
     }
 
-    /**
-     * Sets the date when the matchday takes place.
-     *
-     * @param date  date when the matchday takes place, not null
-     */
-    public void setDate(LocalDate date) {
-        Objects.requireNonNull(date, "date must not be null");
-        this.date = date;
+    // writeReplace method for the serialization proxy pattern
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    // readObject method for the serialization proxy pattern
+    private void readObject(ObjectInputStream objectInputStream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required");
+    }
+
+    // Serialization proxy for class Matchday
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final LocalDate date;
+
+        SerializationProxy(Matchday matchday) {
+            this.date = matchday.date;
+        }
+
+        private Object readResolve() {
+            return Matchday.on(this.date);
+        }
     }
 }
