@@ -11,9 +11,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MatchdayPlanner extends Application {
 
@@ -31,8 +34,8 @@ public class MatchdayPlanner extends Application {
         Button btnSave = new Button("_Speichern");
         btnSave.setOnAction(e -> saveMatchdays());
         Button btnXlsxExport = new Button("_XLSX-Export");
-        btnXlsxExport.setOnAction(e -> createXlsx());
-        VBox buttonBox = new VBox(btnNew, btnDelete,  btnLoad, btnSave, btnXlsxExport);
+        btnXlsxExport.setOnAction(e -> xlsxExport());
+        VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
 
         listView.getItems().addAll(
                 Matchday.on(LocalDate.now().minusDays(1)),
@@ -60,9 +63,7 @@ public class MatchdayPlanner extends Application {
             if (empty || item == null) {
                 setText(null);
                 setGraphic(null);
-            }
-            else
-            {
+            } else {
                 setText(item.getDate().toString());
             }
         }
@@ -77,8 +78,7 @@ public class MatchdayPlanner extends Application {
                 final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
                 final Alert alert = new Alert(Alert.AlertType.ERROR, "Am " + dateString + " existiert bereits ein Spieltag!");
                 alert.showAndWait();
-            }
-            else {
+            } else {
                 listView.getItems().add(createdMatchday);
                 listView.getItems().sort(null);
             }
@@ -90,14 +90,39 @@ public class MatchdayPlanner extends Application {
     }
 
     private void loadMatchdays() {
-        System.out.println("Lade Spielplan ...");
+        try (final ObjectInputStream objectInputStream = new ObjectInputStream(
+                new BufferedInputStream(new FileInputStream("spielplan.ser")))) {
+            // This cast is correct because the structure that is deserialized was serialized by saveMatchday()
+            // (if the correct file is read)
+            @SuppressWarnings("unchecked") List<Matchday> matchdays = (ArrayList<Matchday>) objectInputStream.readObject();
+            listView.getItems().setAll(matchdays);
+        } catch (final FileNotFoundException e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR, "Datei nicht gefunden!");
+            alert.showAndWait();
+        } catch (final IOException e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Lesen der Datei!");
+            alert.showAndWait();
+        } catch (final ClassNotFoundException e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR, "Inkompatibles Datenformat!");
+            alert.showAndWait();
+        }
     }
 
     private void saveMatchdays() {
-        System.out.println("Speichere Spielplan ...");
+        List<Matchday> matchdays = new ArrayList<>(listView.getItems());
+        try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream("spielplan.ser")))) {
+            objectOutputStream.writeObject(matchdays);
+        } catch (final FileNotFoundException e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR, "Datei kann nicht erzeugt werden!");
+            alert.showAndWait();
+        } catch (final IOException e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Schreiben der Datei!");
+            alert.showAndWait();
+        }
     }
 
-    private void createXlsx() {
+    private void xlsxExport() {
         MatchdayToXlsxConverter.createXlsxFrom(listView.getItems().stream());
     }
 }
