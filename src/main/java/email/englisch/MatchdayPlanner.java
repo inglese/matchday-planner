@@ -19,7 +19,6 @@ import java.util.Optional;
 
 public class MatchdayPlanner extends Application {
 
-    private final ListView<Matchday> listView = new ListView<>();
     private final TreeView<Matchday> treeView = new TreeView<>();
     private final List<Matchday> matchdays = new ArrayList<>();
 
@@ -52,11 +51,6 @@ public class MatchdayPlanner extends Application {
     }
 
     private VBox createButtonBox(Stage primaryStage) {
-/*
-        Button btnXlsxExport = new Button("_XLSX-Export");
-        btnXlsxExport.setOnAction(e -> xlsxExport());
-        final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
-*/
         Button btnNew = new Button("_Neu");
         btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
@@ -66,8 +60,10 @@ public class MatchdayPlanner extends Application {
         btnLoad.setOnAction(e -> loadMatchdays());
         Button btnSave = new Button("_Speichern");
         btnSave.setOnAction(e -> saveMatchdays());
+        Button btnXlsxExport = new Button("_XLSX-Export");
+        btnXlsxExport.setOnAction(e -> xlsxExport());
 
-        return new VBox(btnNew, btnDelete, btnLoad, btnSave);
+        return new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
@@ -148,6 +144,6 @@ public class MatchdayPlanner extends Application {
     }
 
     private void xlsxExport() {
-        MatchdayToXlsxConverter.createXlsxFrom(listView.getItems().stream());
+        MatchdayToXlsxConverter.createXlsxFrom(matchdays.stream());
     }
 }
