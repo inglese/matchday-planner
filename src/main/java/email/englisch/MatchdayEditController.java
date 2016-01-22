@@ -60,7 +60,7 @@ public class MatchdayEditController {
      *
      * @return the optional containing the matchday, if it was created, null otherwise
      */
-    public Optional<Matchday> getCreatedMatchday() {
+    public Optional<Matchday> getCreatedMatchdayOptional() {
         return this.createdMatchday;
     }
 

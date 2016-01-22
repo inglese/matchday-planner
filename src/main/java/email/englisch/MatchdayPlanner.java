@@ -10,11 +10,10 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class MatchdayPlanner extends Application {
 
@@ -23,7 +22,7 @@ public class MatchdayPlanner extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final VBox buttonBox = createButtonBox();
+        final VBox buttonBox = createButtonBox(primaryStage);
 
         TreeItem<Matchday> treeRoot = new TreeItem<>(Matchday.on(LocalDate.now()));
         treeView.setRoot(treeRoot);
@@ -48,10 +47,8 @@ public class MatchdayPlanner extends Application {
         primaryStage.show();
     }
 
-    private VBox createButtonBox() {
+    private VBox createButtonBox(Stage primaryStage) {
 /*
-        Button btnNew = new Button("_Neu");
-        btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnLoad = new Button("_Laden");
         btnLoad.setOnAction(e -> loadMatchdays());
         Button btnSave = new Button("_Speichern");
@@ -60,11 +57,13 @@ public class MatchdayPlanner extends Application {
         btnXlsxExport.setOnAction(e -> xlsxExport());
         final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
 */
+        Button btnNew = new Button("_Neu");
+        btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
         btnDelete.setOnAction(e -> deleteMatchday());
         btnDelete.disableProperty().bind(treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
 
-        return new VBox(btnDelete);
+        return new VBox(btnNew, btnDelete);
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
@@ -83,16 +82,22 @@ public class MatchdayPlanner extends Application {
     private void createMatchday(Stage primaryStage) {
         MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
         matchdayEditController.showMatchdayEditDialogAndWait();
-        if (matchdayEditController.getCreatedMatchday().isPresent()) {
-            final Matchday createdMatchday = matchdayEditController.getCreatedMatchday().get();
+        final Optional<Matchday> createdMatchdayOptional = matchdayEditController.getCreatedMatchdayOptional();
+        if (createdMatchdayOptional.isPresent()) {
+            final Matchday createdMatchday = createdMatchdayOptional.get();
+/*
             if (listView.getItems().contains(createdMatchday)) {
                 final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
                 final Alert alert = new Alert(Alert.AlertType.ERROR, "Am " + dateString + " existiert bereits ein Spieltag!");
                 alert.showAndWait();
+*/
+            treeView.getRoot().getChildren().add(new TreeItem<>(createdMatchday));
+/*
             } else {
                 listView.getItems().add(createdMatchday);
                 listView.getItems().sort(null);
             }
+*/
         }
     }
 
