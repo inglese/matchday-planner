@@ -3,10 +3,7 @@ package email.englisch;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,14 +13,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MatchdayPlanner extends Application {
 
-    private ListView<Matchday> listView = new ListView<>();
+    private final ListView<Matchday> listView = new ListView<>();
+    private final TreeView<Matchday> treeView = new TreeView<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+/*
         Button btnNew = new Button("_Neu");
         btnNew.setOnAction(e -> createMatchday(primaryStage));
         Button btnDelete = new Button("_Löschen");
@@ -35,28 +35,34 @@ public class MatchdayPlanner extends Application {
         btnSave.setOnAction(e -> saveMatchdays());
         Button btnXlsxExport = new Button("_XLSX-Export");
         btnXlsxExport.setOnAction(e -> xlsxExport());
-        VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
+        final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
+*/
+        final VBox buttonBox = new VBox();
 
-        listView.getItems().addAll(
-                Matchday.on(LocalDate.now().minusDays(1)),
-                Matchday.on(LocalDate.now()),
-                Matchday.on(LocalDate.now().plusDays(1))
-        );
-        listView.setCellFactory((param) -> new MatchdayCell());
+        TreeItem<Matchday> treeRoot = new TreeItem<>(Matchday.on(LocalDate.now()));
+        treeView.setRoot(treeRoot);
+        treeView.setShowRoot(false);
+        // Arrays.asList to prevent from "Unchecked generics array creation for varargs parameter" warning
+        treeRoot.getChildren().addAll(Arrays.asList(
+                new TreeItem<>(Matchday.on(LocalDate.now().minusDays(1))),
+                new TreeItem<>(Matchday.on(LocalDate.now())),
+                new TreeItem<>(Matchday.on(LocalDate.now().plusDays(1)))
+        ));
+        treeView.setCellFactory(param -> new MatchdayCell());
 
-        BorderPane root = new BorderPane();
-        BorderPane.setAlignment(listView, Pos.TOP_LEFT);
-        root.setCenter(listView);
+        final BorderPane root = new BorderPane();
+        BorderPane.setAlignment(treeView, Pos.TOP_LEFT);
+        root.setCenter(treeView);
         root.setRight(buttonBox);
 
-        Scene scene = new Scene(root);
+        final Scene scene = new Scene(root);
 
         primaryStage.setTitle("Spielplan");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private static class MatchdayCell extends ListCell<Matchday> {
+    private static class MatchdayCell extends TreeCell<Matchday> {
         @Override
         protected void updateItem(Matchday item, boolean empty) {
             super.updateItem(item, empty);
