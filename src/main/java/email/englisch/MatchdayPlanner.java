@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,21 +21,23 @@ public class MatchdayPlanner extends Application {
 
     private final ListView<Matchday> listView = new ListView<>();
     private final TreeView<Matchday> treeView = new TreeView<>();
+    private final List<Matchday> matchdays = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final VBox buttonBox = createButtonBox(primaryStage);
+        matchdays.addAll(Arrays.asList(
+                Matchday.on(LocalDate.now().minusDays(1)),
+                Matchday.on(LocalDate.now()),
+                Matchday.on(LocalDate.now().plusDays(1))
+        ));
 
         TreeItem<Matchday> treeRoot = new TreeItem<>(Matchday.on(LocalDate.now()));
         treeView.setRoot(treeRoot);
         treeView.setShowRoot(false);
-        // Arrays.asList to prevent from "Unchecked generics array creation for varargs parameter" warning
-        treeRoot.getChildren().addAll(Arrays.asList(
-                new TreeItem<>(Matchday.on(LocalDate.now().minusDays(1))),
-                new TreeItem<>(Matchday.on(LocalDate.now())),
-                new TreeItem<>(Matchday.on(LocalDate.now().plusDays(1)))
-        ));
+        matchdays.stream().forEach(matchday -> treeRoot.getChildren().add(new TreeItem<>(matchday)));
         treeView.setCellFactory(param -> new MatchdayCell());
+
+        final VBox buttonBox = createButtonBox(primaryStage);
 
         final BorderPane root = new BorderPane();
         BorderPane.setAlignment(treeView, Pos.TOP_LEFT);
@@ -85,25 +89,23 @@ public class MatchdayPlanner extends Application {
         final Optional<Matchday> createdMatchdayOptional = matchdayEditController.getCreatedMatchdayOptional();
         if (createdMatchdayOptional.isPresent()) {
             final Matchday createdMatchday = createdMatchdayOptional.get();
-/*
-            if (listView.getItems().contains(createdMatchday)) {
+            if (matchdays.contains(createdMatchday)) {
                 final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
                 final Alert alert = new Alert(Alert.AlertType.ERROR, "Am " + dateString + " existiert bereits ein Spieltag!");
                 alert.showAndWait();
-*/
-            treeView.getRoot().getChildren().add(new TreeItem<>(createdMatchday));
-/*
             } else {
-                listView.getItems().add(createdMatchday);
-                listView.getItems().sort(null);
+                matchdays.add(createdMatchday);
+                matchdays.sort(null);
+                final int createdMatchdayIndex = matchdays.indexOf(createdMatchday);
+                treeView.getRoot().getChildren().add(createdMatchdayIndex, new TreeItem<>(createdMatchday));
             }
-*/
         }
     }
 
     private void deleteMatchday() {
-        final TreeItem<Matchday> selectedItem = this.treeView.getSelectionModel().getSelectedItem();
-        this.treeView.getRoot().getChildren().remove(selectedItem);
+        final TreeItem<Matchday> selectedItem = treeView.getSelectionModel().getSelectedItem();
+        matchdays.remove(selectedItem.getValue());
+        treeView.getRoot().getChildren().remove(selectedItem);
     }
 
     private void loadMatchdays() {
