@@ -53,8 +53,6 @@ public class MatchdayPlanner extends Application {
 
     private VBox createButtonBox(Stage primaryStage) {
 /*
-        Button btnSave = new Button("_Speichern");
-        btnSave.setOnAction(e -> saveMatchdays());
         Button btnXlsxExport = new Button("_XLSX-Export");
         btnXlsxExport.setOnAction(e -> xlsxExport());
         final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
@@ -66,8 +64,10 @@ public class MatchdayPlanner extends Application {
         btnDelete.disableProperty().bind(treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
         Button btnLoad = new Button("_Laden");
         btnLoad.setOnAction(e -> loadMatchdays());
+        Button btnSave = new Button("_Speichern");
+        btnSave.setOnAction(e -> saveMatchdays());
 
-        return new VBox(btnNew, btnDelete, btnLoad);
+        return new VBox(btnNew, btnDelete, btnLoad, btnSave);
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
@@ -135,7 +135,6 @@ public class MatchdayPlanner extends Application {
     }
 
     private void saveMatchdays() {
-        List<Matchday> matchdays = new ArrayList<>(listView.getItems());
         try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream("spielplan.ser")))) {
             objectOutputStream.writeObject(matchdays);
