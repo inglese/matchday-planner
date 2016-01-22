@@ -53,8 +53,6 @@ public class MatchdayPlanner extends Application {
 
     private VBox createButtonBox(Stage primaryStage) {
 /*
-        Button btnLoad = new Button("_Laden");
-        btnLoad.setOnAction(e -> loadMatchdays());
         Button btnSave = new Button("_Speichern");
         btnSave.setOnAction(e -> saveMatchdays());
         Button btnXlsxExport = new Button("_XLSX-Export");
@@ -66,8 +64,10 @@ public class MatchdayPlanner extends Application {
         Button btnDelete = new Button("_Löschen");
         btnDelete.setOnAction(e -> deleteMatchday());
         btnDelete.disableProperty().bind(treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
+        Button btnLoad = new Button("_Laden");
+        btnLoad.setOnAction(e -> loadMatchdays());
 
-        return new VBox(btnNew, btnDelete);
+        return new VBox(btnNew, btnDelete, btnLoad);
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
@@ -113,8 +113,15 @@ public class MatchdayPlanner extends Application {
                 new BufferedInputStream(new FileInputStream("spielplan.ser")))) {
             // This cast is correct because the structure that is deserialized was serialized by saveMatchday()
             // (if the correct file is read)
-            @SuppressWarnings("unchecked") List<Matchday> matchdays = (ArrayList<Matchday>) objectInputStream.readObject();
-            listView.getItems().setAll(matchdays);
+            @SuppressWarnings("unchecked") final List<Matchday> loadedMatchdays =
+                    (ArrayList<Matchday>) objectInputStream.readObject();
+
+            matchdays.clear();
+            treeView.getRoot().getChildren().clear();
+            loadedMatchdays.forEach(matchday -> {
+                matchdays.add(matchday);
+                treeView.getRoot().getChildren().add(new TreeItem<>(matchday));
+            });
         } catch (final FileNotFoundException e) {
             final Alert alert = new Alert(Alert.AlertType.ERROR, "Datei nicht gefunden!");
             alert.showAndWait();
