@@ -23,21 +23,7 @@ public class MatchdayPlanner extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-/*
-        Button btnNew = new Button("_Neu");
-        btnNew.setOnAction(e -> createMatchday(primaryStage));
-        Button btnDelete = new Button("_Löschen");
-        btnDelete.setOnAction(e -> deleteMatchday());
-        btnDelete.disableProperty().bind(listView.getSelectionModel().selectedIndexProperty().lessThan(0));
-        Button btnLoad = new Button("_Laden");
-        btnLoad.setOnAction(e -> loadMatchdays());
-        Button btnSave = new Button("_Speichern");
-        btnSave.setOnAction(e -> saveMatchdays());
-        Button btnXlsxExport = new Button("_XLSX-Export");
-        btnXlsxExport.setOnAction(e -> xlsxExport());
-        final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
-*/
-        final VBox buttonBox = new VBox();
+        final VBox buttonBox = createButtonBox();
 
         TreeItem<Matchday> treeRoot = new TreeItem<>(Matchday.on(LocalDate.now()));
         treeView.setRoot(treeRoot);
@@ -60,6 +46,25 @@ public class MatchdayPlanner extends Application {
         primaryStage.setTitle("Spielplan");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private VBox createButtonBox() {
+/*
+        Button btnNew = new Button("_Neu");
+        btnNew.setOnAction(e -> createMatchday(primaryStage));
+        Button btnLoad = new Button("_Laden");
+        btnLoad.setOnAction(e -> loadMatchdays());
+        Button btnSave = new Button("_Speichern");
+        btnSave.setOnAction(e -> saveMatchdays());
+        Button btnXlsxExport = new Button("_XLSX-Export");
+        btnXlsxExport.setOnAction(e -> xlsxExport());
+        final VBox buttonBox = new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
+*/
+        Button btnDelete = new Button("_Löschen");
+        btnDelete.setOnAction(e -> deleteMatchday());
+        btnDelete.disableProperty().bind(treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
+
+        return new VBox(btnDelete);
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
@@ -92,7 +97,8 @@ public class MatchdayPlanner extends Application {
     }
 
     private void deleteMatchday() {
-        this.listView.getItems().remove(this.listView.getSelectionModel().getSelectedIndex());
+        final TreeItem<Matchday> selectedItem = this.treeView.getSelectionModel().getSelectedItem();
+        this.treeView.getRoot().getChildren().remove(selectedItem);
     }
 
     private void loadMatchdays() {
