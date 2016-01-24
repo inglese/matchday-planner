@@ -13,95 +13,95 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MatchdayPlanner extends Application {
 
-    private final TreeView<Matchday> treeView = new TreeView<>();
-    private final List<Matchday> matchdays = new ArrayList<>();
+    private final MatchdaysViewController matchdaysViewController = new MatchdaysViewController();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        matchdays.addAll(Arrays.asList(
-                Matchday.on(LocalDate.now().minusDays(1)),
-                Matchday.on(LocalDate.now()),
-                Matchday.on(LocalDate.now().plusDays(1))
-        ));
-
-        TreeItem<Matchday> treeRoot = new TreeItem<>(Matchday.on(LocalDate.now()));
-        treeView.setRoot(treeRoot);
-        treeView.setShowRoot(false);
-        matchdays.stream().forEach(matchday -> treeRoot.getChildren().add(new TreeItem<>(matchday)));
-        treeView.setCellFactory(param -> new MatchdayCell());
-
-        final VBox buttonBox = createButtonBox(primaryStage);
-
-        final BorderPane root = new BorderPane();
-        BorderPane.setAlignment(treeView, Pos.TOP_LEFT);
-        root.setCenter(treeView);
-        root.setRight(buttonBox);
-
-        final Scene scene = new Scene(root);
-
+        createExemplaryMatchdays();
+        primaryStage.setScene(createGUI(primaryStage));
         primaryStage.setTitle("Spielplan");
-        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private VBox createButtonBox(Stage primaryStage) {
-        Button btnNew = new Button("_Neu");
-        btnNew.setOnAction(e -> createMatchday(primaryStage));
-        Button btnDelete = new Button("_Löschen");
-        btnDelete.setOnAction(e -> deleteMatchday());
-        btnDelete.disableProperty().bind(treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
-        Button btnLoad = new Button("_Laden");
-        btnLoad.setOnAction(e -> loadMatchdays());
-        Button btnSave = new Button("_Speichern");
-        btnSave.setOnAction(e -> saveMatchdays());
-        Button btnXlsxExport = new Button("_XLSX-Export");
-        btnXlsxExport.setOnAction(e -> xlsxExport());
+    private Scene createGUI(Stage primaryStage) {
+        final BorderPane root = new BorderPane();
+        BorderPane.setAlignment(matchdaysViewController.getControl(), Pos.TOP_LEFT);
+        root.setCenter(matchdaysViewController.getControl());
+        root.setRight(createButtons(primaryStage));
+        return new Scene(root);
+    }
+
+    private VBox createButtons(Stage primaryStage) {
+        Button btnNew = createButtonNew(primaryStage);
+        Button btnDelete = createButtonDelete();
+        Button btnLoad = createButtonLoad();
+        Button btnSave = createButtonSave();
+        Button btnXlsxExport = createButtonXlsxExport();
 
         return new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
     }
 
-    private static class MatchdayCell extends TreeCell<Matchday> {
-        @Override
-        protected void updateItem(Matchday item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                setText(item.getDate().toString());
-            }
-        }
+    private void createExemplaryMatchdays() {
+        matchdaysViewController.insertMatchday(Matchday.on(LocalDate.now().minusDays(1)));
+        matchdaysViewController.insertMatchday(Matchday.on(LocalDate.now()));
+        matchdaysViewController.insertMatchday(Matchday.on(LocalDate.now().plusDays(1)));
     }
 
-    private void createMatchday(Stage primaryStage) {
+    private Button createButtonNew(Stage primaryStage) {
+        Button btnNew = new Button("_Neu");
+        btnNew.setOnAction(e -> showMatchdayCreationDialog(primaryStage));
+        return btnNew;
+    }
+
+    private Button createButtonDelete() {
+        Button btnDelete = new Button("_Löschen");
+        btnDelete.setOnAction(e -> matchdaysViewController.deleteSelectedMatchday());
+        btnDelete.disableProperty().bind(matchdaysViewController.aMatchdayIsSelectedProperty());
+        return btnDelete;
+    }
+
+    private Button createButtonLoad() {
+        Button btnLoad = new Button("_Laden");
+        btnLoad.setOnAction(e -> loadMatchdays());
+        return btnLoad;
+    }
+
+    private Button createButtonSave() {
+        Button btnSave = new Button("_Speichern");
+        btnSave.setOnAction(e -> saveMatchdays());
+        return btnSave;
+    }
+
+    private Button createButtonXlsxExport() {
+        Button btnXlsxExport = new Button("_XLSX-Export");
+        btnXlsxExport.setOnAction(e -> xlsxExport());
+        return btnXlsxExport;
+    }
+
+    private void showMatchdayCreationDialog(Stage primaryStage) {
         MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
         matchdayEditController.showMatchdayEditDialogAndWait();
         final Optional<Matchday> createdMatchdayOptional = matchdayEditController.getCreatedMatchdayOptional();
         if (createdMatchdayOptional.isPresent()) {
             final Matchday createdMatchday = createdMatchdayOptional.get();
-            if (matchdays.contains(createdMatchday)) {
+            if (matchdaysViewController.contains(createdMatchday)) {
                 final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
-                final Alert alert = new Alert(Alert.AlertType.ERROR, "Am " + dateString + " existiert bereits ein Spieltag!");
-                alert.showAndWait();
+                showError("Am " + dateString + " existiert bereits ein Spieltag!");
             } else {
-                matchdays.add(createdMatchday);
-                matchdays.sort(null);
-                final int createdMatchdayIndex = matchdays.indexOf(createdMatchday);
-                treeView.getRoot().getChildren().add(createdMatchdayIndex, new TreeItem<>(createdMatchday));
+                matchdaysViewController.insertMatchday(createdMatchday);
             }
         }
     }
 
-    private void deleteMatchday() {
-        final TreeItem<Matchday> selectedItem = treeView.getSelectionModel().getSelectedItem();
-        matchdays.remove(selectedItem.getValue());
-        treeView.getRoot().getChildren().remove(selectedItem);
+    private void showError(String errorMessage) {
+        final Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage);
+        alert.showAndWait();
     }
 
     private void loadMatchdays() {
@@ -112,38 +112,31 @@ public class MatchdayPlanner extends Application {
             @SuppressWarnings("unchecked") final List<Matchday> loadedMatchdays =
                     (ArrayList<Matchday>) objectInputStream.readObject();
 
-            matchdays.clear();
-            treeView.getRoot().getChildren().clear();
-            loadedMatchdays.forEach(matchday -> {
-                matchdays.add(matchday);
-                treeView.getRoot().getChildren().add(new TreeItem<>(matchday));
-            });
+            matchdaysViewController.clear();
+            loadedMatchdays.forEach(matchdaysViewController::insertMatchday);
         } catch (final FileNotFoundException e) {
-            final Alert alert = new Alert(Alert.AlertType.ERROR, "Datei nicht gefunden!");
-            alert.showAndWait();
+            showError("Datei nicht gefunden!");
         } catch (final IOException e) {
-            final Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Lesen der Datei!");
-            alert.showAndWait();
+            showError("Fehler beim Lesen der Datei!");
         } catch (final ClassNotFoundException e) {
-            final Alert alert = new Alert(Alert.AlertType.ERROR, "Inkompatibles Datenformat!");
-            alert.showAndWait();
+            showError("Inkompatibles Datenformat!");
         }
     }
 
     private void saveMatchdays() {
         try (final ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream("spielplan.ser")))) {
-            objectOutputStream.writeObject(matchdays);
+            final ArrayList<Matchday> matchdaysToSave =
+                    matchdaysViewController.getMatchdayStream().collect(Collectors.toCollection(ArrayList::new));
+            objectOutputStream.writeObject(matchdaysToSave);
         } catch (final FileNotFoundException e) {
-            final Alert alert = new Alert(Alert.AlertType.ERROR, "Datei kann nicht erzeugt werden!");
-            alert.showAndWait();
+            showError("Datei kann nicht erzeugt werden!");
         } catch (final IOException e) {
-            final Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler beim Schreiben der Datei!");
-            alert.showAndWait();
+            showError("Fehler beim Schreiben der Datei!");
         }
     }
 
     private void xlsxExport() {
-        MatchdayToXlsxConverter.createXlsxFrom(matchdays.stream());
+        MatchdayToXlsxConverter.createXlsxFrom(matchdaysViewController.getMatchdayStream());
     }
 }
