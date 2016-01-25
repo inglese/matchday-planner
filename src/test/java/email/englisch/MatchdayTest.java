@@ -31,12 +31,9 @@ public class MatchdayTest {
     public void test_compareTo_contract() {
         final LocalDate baseDate = LocalDate.now();
         final Matchday baseMatchday = Matchday.on(baseDate);
-        final LocalDate similarDate = LocalDate.now();
         final Matchday equalMatchday = Matchday.on(baseDate);
-        final LocalDate earlierDate = LocalDate.now().minusDays(1);
-        final Matchday earlierMatchday = Matchday.on(earlierDate);
-        final LocalDate laterDate = LocalDate.now().plusDays(1);
-        final Matchday laterMatchday = Matchday.on(laterDate);
+        final Matchday earlierMatchday = Matchday.on(baseDate.minusDays(1));
+        final Matchday laterMatchday = Matchday.on(baseDate.plusDays(1));
 
         ComparableVerifier.forExamples(baseMatchday, equalMatchday, earlierMatchday, laterMatchday).verify();
     }
