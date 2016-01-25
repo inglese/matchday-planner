@@ -20,25 +20,27 @@ import java.util.stream.Collectors;
 public class MatchdayPlanner extends Application {
 
     private final MatchdaysViewController matchdaysViewController = new MatchdaysViewController();
+    private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
         createExemplaryMatchdays();
-        primaryStage.setScene(createGUI(primaryStage));
+        primaryStage.setScene(createGUI());
         primaryStage.setTitle("Spielplan");
         primaryStage.show();
     }
 
-    private Scene createGUI(Stage primaryStage) {
+    private Scene createGUI() {
         final BorderPane root = new BorderPane();
         BorderPane.setAlignment(matchdaysViewController.getControl(), Pos.TOP_LEFT);
         root.setCenter(matchdaysViewController.getControl());
-        root.setRight(createButtons(primaryStage));
+        root.setRight(createButtons());
         return new Scene(root);
     }
 
-    private VBox createButtons(Stage primaryStage) {
-        Button btnNew = createButtonNew(primaryStage);
+    private VBox createButtons() {
+        Button btnNew = createButtonNew();
         Button btnDelete = createButtonDelete();
         Button btnLoad = createButtonLoad();
         Button btnSave = createButtonSave();
@@ -53,16 +55,16 @@ public class MatchdayPlanner extends Application {
         matchdaysViewController.insertMatchday(Matchday.on(LocalDate.now().plusDays(1)));
     }
 
-    private Button createButtonNew(Stage primaryStage) {
+    private Button createButtonNew() {
         Button btnNew = new Button("_Neu");
-        btnNew.setOnAction(e -> showMatchdayCreationDialog(primaryStage));
+        btnNew.setOnAction(e -> showMatchdayCreationDialog());
         return btnNew;
     }
 
     private Button createButtonDelete() {
         Button btnDelete = new Button("_Löschen");
         btnDelete.setOnAction(e -> matchdaysViewController.deleteSelectedMatchday());
-        btnDelete.disableProperty().bind(matchdaysViewController.aMatchdayIsSelectedProperty());
+        btnDelete.disableProperty().bind(matchdaysViewController.aMatchdayIsSelectedProperty().not());
         return btnDelete;
     }
 
@@ -84,9 +86,13 @@ public class MatchdayPlanner extends Application {
         return btnXlsxExport;
     }
 
-    private void showMatchdayCreationDialog(Stage primaryStage) {
+    private void showMatchdayCreationDialog() {
         MatchdayEditController matchdayEditController = new MatchdayEditController(primaryStage, LocalDate.now());
         matchdayEditController.showMatchdayEditDialogAndWait();
+        getMatchdayFrom(matchdayEditController);
+    }
+
+    private void getMatchdayFrom(MatchdayEditController matchdayEditController) {
         final Optional<Matchday> createdMatchdayOptional = matchdayEditController.getCreatedMatchdayOptional();
         if (createdMatchdayOptional.isPresent()) {
             final Matchday createdMatchday = createdMatchdayOptional.get();
