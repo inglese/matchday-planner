@@ -34,7 +34,7 @@ public class MatchdaysViewController {
         treeView.setRoot(treeRoot);
         treeView.setShowRoot(false);
         treeView.setCellFactory(param -> new MatchdayCell());
-        // bind aMatchdayIsSelectedProperty to treeView.getSelectionModel().selectedIndexProperty().lessThan(0));
+        aMatchdayIsSelectedProperty.bind(treeView.getSelectionModel().selectedItemProperty().isNotNull());
     }
 
     private static class MatchdayCell extends TreeCell<Matchday> {
