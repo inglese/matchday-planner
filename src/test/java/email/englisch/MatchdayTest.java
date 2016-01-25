@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 public class MatchdayTest {
 
-
     @Rule
     public ExpectedException expectedException = none();
 
