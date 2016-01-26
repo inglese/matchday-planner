@@ -45,7 +45,6 @@ public class MatchdayPlanner extends Application {
         Button btnLoad = createButtonLoad();
         Button btnSave = createButtonSave();
         Button btnXlsxExport = createButtonXlsxExport();
-
         return new VBox(btnNew, btnDelete, btnLoad, btnSave, btnXlsxExport);
     }
 
@@ -95,13 +94,16 @@ public class MatchdayPlanner extends Application {
     private void getMatchdayFrom(MatchdayEditController matchdayEditController) {
         final Optional<Matchday> createdMatchdayOptional = matchdayEditController.getCreatedMatchdayOptional();
         if (createdMatchdayOptional.isPresent()) {
-            final Matchday createdMatchday = createdMatchdayOptional.get();
-            if (matchdaysViewController.contains(createdMatchday)) {
-                final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
-                showError("Am " + dateString + " existiert bereits ein Spieltag!");
-            } else {
-                matchdaysViewController.insertMatchday(createdMatchday);
-            }
+            insertIfNotExisting(createdMatchdayOptional.get());
+        }
+    }
+
+    private void insertIfNotExisting(Matchday createdMatchday) {
+        if (!matchdaysViewController.contains(createdMatchday)) {
+            matchdaysViewController.insertMatchday(createdMatchday);
+        } else {
+            final String dateString = createdMatchday.getDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+            showError("Am " + dateString + " existiert bereits ein Spieltag!");
         }
     }
 
@@ -113,13 +115,7 @@ public class MatchdayPlanner extends Application {
     private void loadMatchdays() {
         try (final ObjectInputStream objectInputStream = new ObjectInputStream(
                 new BufferedInputStream(new FileInputStream("spielplan.ser")))) {
-            // This cast is correct because the structure that is deserialized was serialized by saveMatchday()
-            // (if the correct file is read)
-            @SuppressWarnings("unchecked") final List<Matchday> loadedMatchdays =
-                    (ArrayList<Matchday>) objectInputStream.readObject();
-
-            matchdaysViewController.clear();
-            loadedMatchdays.forEach(matchdaysViewController::insertMatchday);
+            readMatchdaysFrom(objectInputStream);
         } catch (final FileNotFoundException e) {
             showError("Datei nicht gefunden!");
         } catch (final IOException e) {
@@ -127,6 +123,15 @@ public class MatchdayPlanner extends Application {
         } catch (final ClassNotFoundException e) {
             showError("Inkompatibles Datenformat!");
         }
+    }
+
+    private void readMatchdaysFrom(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        // This cast is correct because the structure that is deserialized was serialized by saveMatchdays()
+        // (if the correct file is read)
+        @SuppressWarnings("unchecked") final List<Matchday> loadedMatchdays =
+                (ArrayList<Matchday>) objectInputStream.readObject();
+        matchdaysViewController.clear();
+        loadedMatchdays.forEach(matchdaysViewController::insertMatchday);
     }
 
     private void saveMatchdays() {
