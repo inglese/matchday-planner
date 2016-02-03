@@ -9,6 +9,7 @@ import javafx.scene.control.TreeView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -17,6 +18,9 @@ import java.util.stream.Stream;
  * Administers a collection of matchdays and a corresponding control.
  */
 public class MatchdaysViewController {
+
+    // with null provided as Comparator parameter, the sort function uses the default sort order
+    private static Comparator<Matchday> DEFAULT_SORT_ORDER = null;
 
     private List<Matchday> matchdays = new ArrayList<>();
     private TreeView<Matchday> treeView = new TreeView<>();
@@ -61,7 +65,7 @@ public class MatchdaysViewController {
     public void insertMatchday(final Matchday matchday) {
         Objects.requireNonNull(matchday, "matchday must not be null");
         matchdays.add(matchday);
-        matchdays.sort(null);
+        matchdays.sort(DEFAULT_SORT_ORDER);
         final int createdMatchdayIndex = matchdays.indexOf(matchday);
         treeView.getRoot().getChildren().add(createdMatchdayIndex, new TreeItem<>(matchday));
     }
