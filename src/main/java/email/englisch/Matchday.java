@@ -7,7 +7,10 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Manages days where matches can take place
@@ -17,6 +20,7 @@ public class Matchday implements Comparable<Matchday>, Serializable {
     private static final Logger LOGGER = LogManager.getLogger(Matchday.class);
 
     private final LocalDate date;
+    private final List<Match> matches = new ArrayList<>();
 
     private Matchday() {
         throw new AssertionError("default constructor accidentally invoked from within class Matchday");
@@ -36,6 +40,15 @@ public class Matchday implements Comparable<Matchday>, Serializable {
     public static Matchday on(LocalDate date) {
         Objects.requireNonNull(date, "date must not be null");
         return new Matchday(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
+    }
+
+    /**
+     * Returns a sequential stream of matches that take place on this matchday.
+     *
+     * @return a sequential stream over the matchdays on this matchday
+     */
+    public Stream<Match> matchStream() {
+        return matches.stream();
     }
 
     /**

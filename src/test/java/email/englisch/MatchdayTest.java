@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.stream.Stream;
 
 import static email.englisch.builders.MatchBuilder.aMatchAt;
 import static email.englisch.builders.MatchdayBuilder.aMatchdayOn;
@@ -47,5 +48,6 @@ public class MatchdayTest {
         final Matchday matchday = aMatchdayOn(LocalDate.now())
                 .with(aMatchAt(LocalTime.of(10, 0)))
                 .build();
+        final Stream<Match> matchStream = matchday.matchStream();
     }
 }
