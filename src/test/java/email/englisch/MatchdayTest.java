@@ -5,9 +5,13 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.rules.ExpectedException.none;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+
+import static email.englisch.builders.MatchBuilder.aMatchAt;
+import static email.englisch.builders.MatchdayBuilder.aMatchdayOn;
+import static org.junit.rules.ExpectedException.none;
 
 public class MatchdayTest {
 
@@ -36,5 +40,12 @@ public class MatchdayTest {
         final Matchday laterMatchday = Matchday.on(baseDate.plusDays(1));
 
         ComparableVerifier.forExamples(baseMatchday, equalMatchday, earlierMatchday, laterMatchday).verify();
+    }
+
+    @Test
+    public void test_creation_of_matchday_with_match() {
+        final Matchday matchday = aMatchdayOn(LocalDate.now())
+                .with(aMatchAt(LocalTime.of(10, 0)))
+                .build();
     }
 }
