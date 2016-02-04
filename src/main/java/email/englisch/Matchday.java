@@ -43,6 +43,19 @@ public class Matchday implements Comparable<Matchday>, Serializable {
     }
 
     /**
+     * Inserts the specified match into the matchday.
+     * <p>
+     * The match is automatically inserted at the correct position regarding its ordering,
+     * so an index does where to insert it does not have to be provided.
+     *
+     * @param match  the match to be inserted, not null
+     */
+    public void insert(Match match) {
+        Objects.requireNonNull("match must not be null");
+        matches.add(match);
+    }
+
+    /**
      * Returns a sequential stream of matches that take place on this matchday.
      *
      * @return a sequential stream over the matchdays on this matchday

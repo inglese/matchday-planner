@@ -19,7 +19,11 @@ public class MatchdayBuilder {
     }
 
     public Matchday build() {
-        return Matchday.on(date);
+        final Matchday matchday = Matchday.on(date);
+        for (final MatchBuilder matchBuilder : matchBuilders) {
+            matchday.insert(matchBuilder.build());
+        }
+        return matchday;
     }
 
     public MatchdayBuilder with(MatchBuilder matchBuilder) {

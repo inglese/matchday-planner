@@ -2,13 +2,16 @@ package email.englisch;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static email.englisch.builders.MatchBuilder.aMatchAt;
 import static email.englisch.builders.MatchdayBuilder.aMatchdayOn;
@@ -48,6 +51,8 @@ public class MatchdayTest {
         final Matchday matchday = aMatchdayOn(LocalDate.now())
                 .with(aMatchAt(LocalTime.of(10, 0)))
                 .build();
-        final Stream<Match> matchStream = matchday.matchStream();
+        final List<Match> matches = matchday.matchStream().collect(Collectors.toList());
+        final Match expectedMatch = Match.at(LocalTime.of(10, 0));
+        assertThat(matches, contains(expectedMatch));
     }
 }
