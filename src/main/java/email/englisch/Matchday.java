@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -18,6 +19,9 @@ import java.util.stream.Stream;
 public class Matchday implements Comparable<Matchday>, Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(Matchday.class);
+
+    // with null provided as Comparator parameter, the sort function uses the default sort order
+    private static Comparator<Match> DEFAULT_SORT_ORDER = null;
 
     private final LocalDate date;
     private final List<Match> matches = new ArrayList<>();
@@ -53,6 +57,7 @@ public class Matchday implements Comparable<Matchday>, Serializable {
     public void insert(Match match) {
         Objects.requireNonNull("match must not be null");
         matches.add(match);
+        matches.sort(DEFAULT_SORT_ORDER);
     }
 
     /**

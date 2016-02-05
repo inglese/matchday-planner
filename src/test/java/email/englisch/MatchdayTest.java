@@ -1,5 +1,6 @@
 package email.englisch;
 
+import email.englisch.builders.MatchBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,5 +55,18 @@ public class MatchdayTest {
         final List<Match> matches = matchday.matchStream().collect(Collectors.toList());
         final Match expectedMatch = Match.at(LocalTime.of(10, 0));
         assertThat(matches, contains(expectedMatch));
+    }
+
+    @Test
+    public void inserted_matches_should_be_ordered_correctly() {
+        final MatchBuilder earlierMatchBuilder = aMatchAt(LocalTime.of(10, 0));
+        final MatchBuilder laterMatchBuilder = aMatchAt(LocalTime.of(12, 0));
+        final Matchday matchday = aMatchdayOn(LocalDate.now())
+                .with(laterMatchBuilder)
+                .with(earlierMatchBuilder)
+                .build();
+        final List<Match> insertedMatches = matchday.matchStream().collect(Collectors.toList());
+
+        assertThat(insertedMatches, contains(earlierMatchBuilder.build(), laterMatchBuilder.build()));
     }
 }
