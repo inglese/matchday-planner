@@ -38,7 +38,7 @@ public class Matchday implements Comparable<Matchday>, Serializable {
     /**
      * Generates a Matchday at the given date
      *
-     * @param  date when the matchday takes place
+     * @param date  date when the matchday takes place
      * @return  the generated Matchday
      */
     public static Matchday on(LocalDate date) {
