@@ -20,7 +20,7 @@ public class MatchdayViewItemTest {
     @Test
     public void creation_with_null_date_should_throw_NPE() {
         expectedException.expect(NullPointerException.class);
-        final MatchdayViewItem matchdayViewItem = new MatchdayViewItem(null);
+        @SuppressWarnings("unused") final MatchdayViewItem matchdayViewItem = new MatchdayViewItem(null);
     }
 
     @Test

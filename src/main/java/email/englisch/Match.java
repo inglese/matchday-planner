@@ -89,4 +89,13 @@ public class Match implements Comparable<Match> {
         Objects.requireNonNull(otherMatch, "otherMatch must not be null");
         return time.compareTo(otherMatch.time);
     }
+
+    /**
+     * Gets the time when the match takes place
+     *
+     * @return the time of the match, not null
+     */
+    public LocalTime getTime() {
+        return LocalTime.from(time);
+    }
 }

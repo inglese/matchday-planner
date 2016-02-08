@@ -26,7 +26,7 @@ public class MatchdayTest {
     @Test
     public void creation_with_null_date_should_throw_NPE() {
         expectedException.expect(NullPointerException.class);
-        final Matchday matchday = Matchday.on(null);
+        @SuppressWarnings("unused") final Matchday matchday = Matchday.on(null);
     }
 
     @Test

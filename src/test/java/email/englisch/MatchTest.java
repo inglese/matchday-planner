@@ -16,7 +16,7 @@ public class MatchTest {
     @Test
     public void creation_with_null_time_should_throw_NPE() {
         expectedException.expect(NullPointerException.class);
-        final Match match = Match.at(null);
+        @SuppressWarnings("unused") final Match match = Match.at(null);
     }
 
     @Test
